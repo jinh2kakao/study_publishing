@@ -1,0 +1,68 @@
+{
+  "name": "11_send_email_forms",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "7ed68e4e-5670-403b-8b09-e7383e1ac98c",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cb801bc4-81b6-4fa2-a168-eff927f3b610",
+      "name": "Webhook",
+      "webhookId": "7ed68e4e-5670-403b-8b09-e7383e1ac98c"
+    },
+    {
+      "parameters": {
+        "sendTo": "jinh1203@gmail.com",
+        "subject": "={{ $json.query.subject }}",
+        "message": "={{ $json.query.contents }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "9298fa53-ed9f-4afb-8b2f-2385af7ea018",
+      "name": "Send a message",
+      "webhookId": "44f1d64c-3138-4ee3-86f9-366a81cd4753",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "klzRIZmxz3DEDg0Y",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8955cdaf-c6d3-4714-8007-78ce09d952b7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "777b07ef47bd7c75e9e34b7e5095f486f52077aca2a4ed266a442d29f4412bed"
+  },
+  "id": "EybcZ7H1gOQ3W77O",
+  "tags": []
+}

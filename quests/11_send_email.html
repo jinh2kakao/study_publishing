@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>email발송기</title>
+</head>
+
+<body>
+    <form action="http://192.168.0.91:5678/webhook-test/7ed68e4e-5670-403b-8b09-e7383e1ac98c">
+        <div>
+            <label for="subject">subject:</label>
+        </div>
+        
+        <div><input type="text" name="subject">
+        </div>
+        <div>
+            <label for="contents">contents:</label>
+        </div>
+        <div>
+            <textarea name="contents" rows="4" cols="50"></textarea>
+        </div>
+        <div>
+            <button type="submit">mail send</button>
+        </div>
+    </form>
+</body>
+
+</html>
