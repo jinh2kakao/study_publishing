@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>class&id실습</title>
+    <style>
+        div {
+            margin-top: 5px;
+            padding-top: 10px;
+            background-color: lightblue;
+            text-align: left;
+        }
+        div.first-background {
+            margin-top: 5px;
+            padding-top: 10px;
+            background-color: lightgreen;
+            text-align: left;
+        }
+        span {
+            padding-left: 40px;
+            background-color: lightgrey;
+            border: 1px solid red;
+        }
+        span#second-border {
+            padding-left: 40px;
+            background-color: lightgrey;
+            border: 3px solid green;
+        }
+    </style>
+</head>
+
+<body>
+    
+    01 Hello world!
+    <div class="first-background">
+        02 Hello world!
+        <span>07 Hello world!</span>
+    </div>
+    <div>
+        03 Hello world!
+        <span>04 Hello world!</span>
+    </div>
+    <div class="first-background">
+        05 Hello world!
+        <span id="second-border">
+            06 Hello world!
+        </span>
+    </div>
+</body>
+
+</html>
