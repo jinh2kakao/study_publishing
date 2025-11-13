@@ -267,6 +267,42 @@
             color: var(--color-blue);
             margin-right: 0.5rem;
         }
+
+        /* --- [추가] 반응형 레이아웃 (태블릿 & 모바일) --- */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr; /* 1단 컬럼으로 스택 */
+                height: auto; /* 자동 높이 */
+                padding: 1rem;
+            }
+
+            .grid-column {
+                overflow-y: visible; /* 컨텐츠 길이에 따라 늘어남 */
+            }
+
+            .header h1 {
+                font-size: 1.25rem; /* 태블릿 헤더 폰트 크기 */
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.1rem; /* 모바일 헤더 폰트 크기 */
+            }
+
+            /* 모바일에서는 버튼도 세로로 쌓음 */
+            .action-buttons {
+                grid-template-columns: 1fr; 
+            }
+
+            .grid-column {
+                padding: 0.75rem;
+            }
+            
+            .btn {
+                padding: 1rem; /* 모바일에서 버튼 터치 영역 확대 */
+            }
+        }
     </style>
 </head>
 <body>
@@ -284,11 +320,11 @@
         <!-- Column 1: 영상 목록 (20%) -->
         <section class="grid-column column-list">
             <h2>영상 목록 (운영팀)</h2>
-            <!-- [제약조건 4] 데이터 밀집형 테이블 -->
-            <table class="video-table">
-                <thead>
-                    <tr>
-                        <th>상태</th>
+            <!-- [추가] 반응형 테이블 가로 스크롤을 위한 래퍼 -->
+            <div style="overflow-x: auto;">
+                <!-- [제약조건 4] 데이터 밀집형 테이블 -->
+                <table class="video-table">
+                    <thead>
                         <th>영상 제목</th>
                         <th>업로더</th>
                         <th>요청일</th>
@@ -321,6 +357,7 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </section>
 
         <!-- Column 2: 메인 플레이어 (55%) -->
