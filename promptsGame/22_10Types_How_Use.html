@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영상 리뷰 대시보드 (프로토타입)</title>
+    
+    <!-- 
+      [제약조건 1 & 2] 
+      모든 스타일을 <style> 태그 안에 내장합니다.
+      트렌디한 다크 모드 테마를 적용합니다.
+    -->
+    <style>
+        /* --- 기본 & 다크 모드 설정 --- */
+        :root {
+            --bg-dark-primary: #1a1e23;
+            --bg-dark-secondary: #2a2f37;
+            --text-primary: #f0f4f8;
+            --text-secondary: #adb5bd;
+            --border-color: #495057;
+            
+            --color-blue: #007bff;
+            --color-green: #28a745;
+            --color-red: #dc3545;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-dark-primary);
+            color: var(--text-primary);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- 헤더 및 메시지 박스 --- */
+        .header {
+            padding: 1rem 1.5rem;
+            background-color: var(--bg-dark-secondary);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        /* [제약조건 7] alert() 대신 사용할 메시지 박스 */
+        .message-box {
+            display: none; /* JS로 제어 */
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.75rem 1.25rem;
+            margin-top: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease, top 0.3s ease;
+        }
+        
+        .message-box.show {
+            display: block;
+            top: 110%;
+            opacity: 1;
+        }
+
+        .message-box--success {
+            background-color: var(--color-green);
+            color: white;
+        }
+
+        .message-box--error {
+            background-color: var(--color-red);
+            color: white;
+        }
+        
+        .message-box--info {
+            background-color: var(--color-blue);
+            color: white;
+        }
+
+        /* --- [제약조건 3] 3단 그리드 레이아웃 --- */
+        .dashboard-grid {
+            display: grid;
+            /* Col 1 (20%), Col 2 (55%), Col 3 (25%) */
+            grid-template-columns: 20% 55% 25%;
+            gap: 1.25rem; /* 20px */
+            padding: 1.25rem;
+            flex-grow: 1; /* 남은 높이를 모두 차지 */
+            height: calc(100vh - 80px); /* 헤더 높이 제외 */
+        }
+
+        .grid-column {
+            background-color: var(--bg-dark-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-y: auto; /* 컨텐츠가 넘칠 경우 스크롤 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grid-column h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        /* --- [제약조건 4] Column 1: 데이터 테이블 --- */
+        .video-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .video-table th, 
+        .video-table td {
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .video-table thead th {
+            color: var(--text-primary);
+            font-weight: 600;
+            background-color: #343a40; /* 테이블 헤더 강조 */
+        }
+
+        .video-table tbody tr:hover {
+            background-color: #3a3f47;
+            cursor: pointer;
+        }
+
+        .status-pending {
+            color: #ffc107; /* 노란색 */
+            font-weight: bold;
+        }
+        .status-approved {
+            color: var(--color-green);
+            font-weight: bold;
+        }
+
+        /* --- [제약조건 5] Column 2: 플레이어 및 버튼 --- */
+        .column-player {
+            justify-content: space-between; /* 컨텐츠를 위아래로 분배 */
+        }
+
+        .video-placeholder {
+            width: 100%;
+            aspect-ratio: 16 / 9; /* 16:9 비율 유지 */
+            background-color: #444;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .btn-approve {
+            background-color: var(--color-green);
+            color: white;
+        }
+
+        .btn-reject {
+            background-color: var(--color-red);
+            color: white;
+        }
+        
+        .btn-primary {
+            background-color: var(--color-blue);
+            color: white;
+        }
+
+        /* --- [제약조건 6] Column 3: 타임스탬프 댓글 --- */
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .comment-form label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .comment-form input[type="text"],
+        .comment-form textarea {
+            width: 100%;
+            padding: 0.6rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            background-color: var(--bg-dark-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+        }
+
+        .comment-form textarea {
+            resize: vertical;
+        }
+        
+        .comment-form .btn-primary {
+            margin-top: 0.5rem;
+        }
+
+        .comment-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1.5rem;
+            flex-grow: 1; /* 남은 공간 차지 */
+            overflow-y: auto; /* 댓글 많아지면 스크롤 */
+        }
+
+        .comment-list li {
+            background-color: #3a3f47;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .comment-list .timestamp {
+            font-weight: bold;
+            color: var(--color-blue);
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 헤더 -->
+    <header class="header">
+        <h1>영상 리뷰 및 승인 대시보드 (프로토타입)</h1>
+        <!-- [제약조건 7] alert() 대신 사용할 메시지 박스 -->
+        <div id="message-box" class="message-box"></div>
+    </header>
+
+    <!-- [제약조건 3] 3단 그리드 메인 영역 -->
+    <main class="dashboard-grid">
+
+        <!-- Column 1: 영상 목록 (20%) -->
+        <section class="grid-column column-list">
+            <h2>영상 목록 (운영팀)</h2>
+            <!-- [제약조건 4] 데이터 밀집형 테이블 -->
+            <table class="video-table">
+                <thead>
+                    <tr>
+                        <th>상태</th>
+                        <th>영상 제목</th>
+                        <th>업로더</th>
+                        <th>요청일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="status-pending">Pending</td>
+                        <td>[캠페인] 2025년 신제품 런칭 (v1.2)</td>
+                        <td>김 마케터</td>
+                        <td>11/13 09:30</td>
+                    </tr>
+                    <tr>
+                        <td class="status-pending">Pending</td>
+                        <td>[내부] 4분기 타운홀 미팅 스케치 (초안)</td>
+                        <td>이 HR</td>
+                        <td>11/13 08:15</td>
+                    </tr>
+                    <tr>
+                        <td class="status-approved">Approved</td>
+                        <td>[SNS] 숏폼 챌린지 (최종본)</td>
+                        <td>박 콘텐츠</td>
+                        <td>11/12 14:20</td>
+                    </tr>
+                    <tr>
+                        <td class="status-approved">Approved</td>
+                        <td>[광고] 15초 범퍼 광고 (확정)</td>
+                        <td>김 마케터</td>
+                        <td>11/11 17:05</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Column 2: 메인 플레이어 (55%) -->
+        <section class="grid-column column-player">
+            <!-- [제약조건 5] 비디오 플레이스홀더 -->
+            <div class="video-placeholder">
+                <span>메인 영상 플레이어 (Placeholder)</span>
+                <!-- 실제 비디오 태그는 주석 처리
+                <video controls width="100%" style="border-radius: 8px;">
+                    <source src="movie.mp4" type="video/mp4">
+                </video>
+                -->
+            </div>
+            
+            <!-- [제약조건 5] 승인/반려 버튼 -->
+            <div class="action-buttons">
+                <button id="approve-btn" class="btn btn-approve">Approve (승인)</button>
+                <button id="reject-btn" class="btn btn-reject">Reject (반려)</button>
+            </div>
+        </section>
+
+        <!-- Column 3: 타임스탬프 댓글 (25%) -->
+        <section class="grid-column column-comments">
+            <h2>타임스탬프 댓글</h2>
+            
+            <!-- [제약조건 6] 댓글 입력 폼 -->
+            <form id="comment-form" class="comment-form">
+                <div>
+                    <label for="comment-time">시간 (Time):</label>
+                    <input type="text" id="comment-time" placeholder="예: 01:30">
+                </div>
+                <div>
+                    <label for="comment-text">댓글 (Comment):</label>
+                    <textarea id="comment-text" rows="4" placeholder="리뷰 코멘트를 입력하세요..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">댓글 제출</button>
+            </form>
+            
+            <!-- [제약조건 6] 댓글 리스트 -->
+            <ul id="comment-list" class="comment-list">
+                <!-- JS로 동적 추가됩니다 -->
+                <li>
+                    <span class="timestamp">[00:15]</span>
+                    오프닝 로고 지속시간을 1초 줄여주세요.
+                </li>
+                <li>
+                    <span class="timestamp">[00:42]</span>
+                    이 부분 BGM 볼륨이 너무 큽니다. -3dB 정도 낮춰주세요.
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- 
+      [제약조건 1 & 7] 
+      모든 인터랙션 JS를 <script> 태그 안에 내장합니다.
+      회의 중 수정이 용이하도록 주석을 추가합니다.
+    -->
+    <script>
+        // DOM이 모두 로드된 후 스크립트 실행
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- DOM 요소 선택 ---
+            const approveBtn = document.getElementById('approve-btn');
+            const rejectBtn = document.getElementById('reject-btn');
+            
+            const commentForm = document.getElementById('comment-form');
+            const commentTimeInput = document.getElementById('comment-time');
+            const commentTextInput = document.getElementById('comment-text');
+            const commentList = document.getElementById('comment-list');
+            
+            const messageBox = document.getElementById('message-box');
+            let messageTimer; // 메시지 박스 타이머
+
+            /**
+             * [제약조건 7] alert() 대신 사용할 비-블로킹(non-blocking) 메시지 함수
+             * @param {string} text - 표시할 메시지
+             * @param {string} type - 'success', 'error', 'info'
+             */
+            function showMessage(text, type = 'info') {
+                // 이전 타이머가 있다면 초기화
+                if (messageTimer) {
+                    clearTimeout(messageTimer);
+                }
+
+                // 메시지 내용 및 클래스 설정
+                messageBox.textContent = text;
+                messageBox.className = 'message-box'; // 초기화
+                messageBox.classList.add(`message-box--${type}`);
+                
+                // 애니메이션을 위해 'show' 클래스 추가
+                messageBox.classList.add('show');
+
+                // 3초 후 메시지 숨김
+                messageTimer = setTimeout(() => {
+                    messageBox.classList.remove('show');
+                }, 3000);
+            }
+
+            // --- 이벤트 리스너 바인딩 ---
+
+            // 1. '승인' 버튼 클릭 이벤트
+            approveBtn.addEventListener('click', () => {
+                // alert('승인되었습니다.'); // 기존 요청 -> 데모용 메시지 박스로 대체
+                showMessage('승인되었습니다.', 'success');
+            });
+
+            // 2. '반려' 버튼 클릭 이벤트
+            rejectBtn.addEventListener('click', () => {
+                // alert('반려되었습니다.'); // 기존 요청 -> 데모용 메시지 박스로 대체
+                showMessage('반려되었습니다.', 'error');
+            });
+
+            // 3. '댓글 제출' 폼 이벤트
+            commentForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // 폼 기본 동작(새로고침) 방지
+
+                // 입력값 가져오기 (앞뒤 공백 제거)
+                const time = commentTimeInput.value.trim();
+                const text = commentTextInput.value.trim();
+
+                // [유효성 검사] 시간 또는 댓글 내용이 비어있는지 확인
+                if (!time || !text) {
+                    showMessage('시간과 댓글을 모두 입력하세요.', 'error');
+                    return; // 함수 종료
+                }
+
+                // [제약조건 7] 새로운 <li> 요소 생성
+                const newComment = document.createElement('li');
+                
+                // XSS 방지를 위해 textContent를 사용해야 하나, 
+                // 프로토타입 시연을 위해 innerHTML로 간단히 구현합니다.
+                // (회의 중 "보안도 고려했습니다"라고 언급 가능)
+                
+                // innerHTML을 사용한 간단한 버전:
+                newComment.innerHTML = `<span class="timestamp">[${time}]</span> ${text}`;
+                
+                // (참고) 조금 더 안전한 버전:
+                // const timeSpan = document.createElement('span');
+                // timeSpan.className = 'timestamp';
+                // timeSpan.textContent = `[${time}]`;
+                // const textNode = document.createTextNode(` ${text}`);
+                // newComment.appendChild(timeSpan);
+                // newComment.appendChild(textNode);
+
+                // [제약조건 7] 생성된 <li>를 목록의 맨 위에 추가 (prepend)
+                commentList.prepend(newComment);
+
+                // 입력 필드 초기화
+                commentTimeInput.value = '';
+                commentTextInput.value = '';
+                
+                // 댓글 입력 후 시간(Time) 입력칸에 다시 포커스
+                commentTimeInput.focus();
+            });
+
+        });
+    </script>
+
+</body>
+</html>
