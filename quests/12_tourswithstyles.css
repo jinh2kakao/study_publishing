@@ -1,0 +1,118 @@
+.header {
+    background-color: #34495E;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 12px; 
+    background-color: #ECF0F1;
+    margin: 0;
+    padding: 0;
+}
+/* --MENU 버튼 CSS-- 시작 */
+/* 부모 요소(.menu)에 Flexbox 적용 */
+.menu {
+    background-color: lightgray;
+    padding: 10px;
+    text-align: center;
+}
+
+/* 링크(a 태그)를 버튼처럼 스타일링 */
+.menu a {
+    /* 1. 모양 및 크기 */
+    padding: 10px 20px;    /* 버튼의 내부 여백 (상하 10px, 좌우 18px) */
+    border-radius: 5px;    /* 모서리를 둥글게 */
+    margin: 10px;          /* 버튼 간의 간격 */
+    display: inline-block;  /* 인라인 블록으로 설정하여 크기 조절 가능 */
+    
+    /* 2. 색상 */
+    background-color: #007bff; /* 배경색 (예: 파란색) */
+    color: white;              /* 글자색 (흰색) */
+    
+    /* 3. 텍스트 및 링크 스타일 */
+    text-decoration: none;     /* 링크의 기본 밑줄 제거 */
+    font-size: 12px;           /* 글자 크기 */
+    font-weight: bold;         /* 글자를 굵게 */
+    text-align: center;        /* 텍스트 중앙 정렬 (필요시) */
+
+    /* 4. 상호작용 (애니메이션) */
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+/* 마우스를 올렸을 때 (Hover) */
+.menu a:hover {
+    background-color: #0056b3; /* 더 어두운 파란색으로 변경 */
+}
+
+/* 클릭했을 때 (Active) */
+.menu a:active {
+    background-color: #004085; /* 더 어두운 색으로 */
+    transform: translateY(1px);  /* 살짝 눌리는 효과 */
+}
+/* --MENU 버튼 CSS-- 끝 */
+
+.internal-links a {
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin: 10px; 
+    background-color: #c8dfee;
+    border: 1px solid #5DADE2;
+    color: #000000;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.internal-links a:hover {
+    background-color: #AED6F1;
+}
+.internal-links a:active {
+    background-color: #5DADE2;
+    transform: translateY(1px);
+}
+
+.container {
+    max-width: 85%;
+    margin: 10px auto;
+}
+
+.section {
+    margin: 20px;
+    padding: 15px;
+    background-color: white;;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    font-size: 12px; 
+}
+
+.section p {
+    line-height: 1.6;
+}
+
+h2 {
+    color: cadetblue;
+    margin-bottom: 10px;
+    border-bottom: 2px solid cadetblue;
+}
+
+hr {
+    border-top: 1px solid lightgray;
+    margin: 20px 0;
+}
+.contact-info {
+    margin-top: 20px;
+    padding: 10px;
+    border-left: 1px solid #3498DB;
+    background-color: #ECF0F1;
+}
+
+.footer {
+    background-color: #34495E;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 30px;
+}
