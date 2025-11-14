@@ -1,8 +1,5 @@
-.header {
-    background-color: #34495E;
-    color: white;
-    text-align: center;
-    padding: 15px;
+html {
+    height: 100%;
 }
 
 body {
@@ -11,7 +8,20 @@ body {
     background-color: #ECF0F1;
     margin: 0;
     padding: 0;
+    display: flex;             /* body를 flex 컨테이너로 만듭니다. */
+    flex-direction: column;    /* 자식 요소들을 세로(열) 방향으로 정렬합니다. */
+    min-height: 100vh;         /* body의 최소 높이를 화면 전체 높이(100vh)로 설정합니다. */
+    margin: 0;                 /* body의 기본 마진을 제거합니다. */
 }
+
+.header {
+    background-color: #34495E;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+
 /* --MENU 버튼 CSS-- 시작 */
 /* 부모 요소(.menu)에 Flexbox 적용 */
 .menu {
@@ -77,6 +87,7 @@ body {
 .container {
     max-width: 85%;
     margin: 10px auto;
+    flex-grow: 1; /* 이 요소가 남은 빈 공간을 모두 채우도록 합니다. */
 }
 
 .section {
